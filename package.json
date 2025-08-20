@@ -1,0 +1,40 @@
+{
+  "name": "carrera-de-calculos",
+  "version": "1.0.0",
+  "description": "Juego educativo interactivo para mejorar las habilidades de cálculo mental con números positivos y negativos",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "python -m http.server 8000",
+    "dev": "python -m http.server 8000"
+  },
+  "keywords": [
+    "juego",
+    "matematicas",
+    "educativo",
+    "calculo-mental",
+    "numeros-negativos",
+    "interactivo",
+    "html5",
+    "css3",
+    "javascript"
+  ],
+  "author": "Carrera de Cálculos",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/carrera-de-calculos.git"
+  },
+  "bugs": {
+    "url": "https://github.com/username/carrera-de-calculos/issues"
+  },
+  "homepage": "https://github.com/username/carrera-de-calculos#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

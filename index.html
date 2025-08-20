@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrera de cálculos - Juego Matemático</title>
+    <link rel="stylesheet" href="src/css/styles.css">
+</head>
+<body>
+    <img src="src/assets/images/logo_color.png" alt="Logo" class="logo">
+    <div class="container">
+        <h1>Carrera de cálculos</h1>
+        <div class="game-area">
+            <div class="counter">Número: <span id="number-counter">0</span>/15</div>
+            <div id="number-display" class="number-display">0</div>
+            <button id="start-button" class="start-button">START</button>
+            
+            <div id="answer-section" class="answer-section" style="display: none;">
+                <h3>¿Cuál es el resultado final?</h3>
+                <input type="number" id="answer-input" class="answer-input" placeholder="Ingresa tu respuesta">
+                <button id="submit-button" class="submit-button">Verificar</button>
+            </div>
+            
+            <div id="result-message" class="result-message" style="display: none;"></div>
+        </div>
+    </div>
+    <script src="src/js/script.js"></script>
+</body>
+</html>
