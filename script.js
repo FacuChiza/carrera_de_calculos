@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const numberDisplay = document.getElementById('number-display');
     const startButton = document.getElementById('start-button');
     const numberCounter = document.getElementById('number-counter');
-    const levelCounter = document.getElementById('level-counter');
     const answerSection = document.getElementById('answer-section');
     const answerInput = document.getElementById('answer-input');
     const submitButton = document.getElementById('submit-button');
@@ -14,18 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let numbers = [];
     let currentSum = 0;
     let initialNumberValue = 0;
-    let currentLevel = 1;
-    let gameStartTime = 0; // Para tracking preciso del tiempo
     const TOTAL_NUMBERS = 15;
     const NEGATIVE_COUNT = 6;
     const POSITIVE_COUNT = 9;
-    
-         // Configuración de niveles
-     const LEVELS = {
-         1: { speed: 2500, name: "Fácil" },      // 2.5 segundos
-         2: { speed: 2000, name: "Intermedio" }, // 2 segundos
-         3: { speed: 1500, name: "Difícil" }     // 1.5 segundos
-     };
 
     // Función para generar un número aleatorio entre -9 y 9 (excluyendo 0)
     function generateRandomNumber() {
@@ -96,34 +86,6 @@ document.addEventListener('DOMContentLoaded', function() {
         numbers = allNumbers;
     }
 
-    // Función para verificar que el primer número no sea igual al número inicial
-    function ensureFirstNumberDifferent() {
-        if (numbers.length > 0 && Math.abs(numbers[0]) === initialNumberValue) {
-            // Si el primer número es igual al inicial, buscar otro número para intercambiar
-            for (let i = 1; i < numbers.length; i++) {
-                if (Math.abs(numbers[i]) !== initialNumberValue) {
-                    // Intercambiar el primer número con este
-                    [numbers[0], numbers[i]] = [numbers[i], numbers[0]];
-                    break;
-                }
-            }
-        }
-        
-        // Verificar también que no haya números consecutivos iguales en toda la secuencia
-        for (let i = 0; i < numbers.length - 1; i++) {
-            if (Math.abs(numbers[i]) === Math.abs(numbers[i + 1])) {
-                // Si hay números consecutivos iguales, buscar un número diferente para intercambiar
-                for (let j = i + 2; j < numbers.length; j++) {
-                    if (Math.abs(numbers[j]) !== Math.abs(numbers[i])) {
-                        // Intercambiar el número problemático
-                        [numbers[i + 1], numbers[j]] = [numbers[j], numbers[i + 1]];
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
     // Función para formatear el número con signo
     function formatNumber(number) {
         if (number > 0) {
@@ -142,31 +104,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Función para actualizar el display del nivel
-    function updateLevelDisplay() {
-        levelCounter.textContent = `${currentLevel}`;
-        
-        // Cambiar el color del contador según el nivel
-        const levelCounterElement = document.querySelector('.level-counter');
-        if (currentLevel === 1) {
-            levelCounterElement.style.background = 'linear-gradient(45deg, #4CAF50, #8BC34A)'; // Verde
-        } else if (currentLevel === 2) {
-            levelCounterElement.style.background = 'linear-gradient(45deg, #FF9800, #FFC107)'; // Naranja
-        } else if (currentLevel === 3) {
-            levelCounterElement.style.background = 'linear-gradient(45deg, #F44336, #E91E63)'; // Rojo
-        }
-    }
-
-    // Función para avanzar al siguiente nivel
-    function levelUp() {
-        if (currentLevel < 3) {
-            currentLevel++;
-            updateLevelDisplay();
-            return true;
-        }
-        return false;
-    }
-
     // Función para actualizar el número en pantalla
     function updateNumber() {
         if (currentNumberIndex < TOTAL_NUMBERS) {
@@ -180,15 +117,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             currentNumberIndex++;
             
-            // Si es el último número, mostrar la sección de respuesta después del tiempo del nivel
+            // Si es el último número, mostrar el signo + o - antes del número
             if (currentNumberIndex === TOTAL_NUMBERS) {
-                // Usar setTimeout con el tiempo exacto del nivel para mantener consistencia
-                const currentSpeed = LEVELS[currentLevel].speed;
                 setTimeout(() => {
-                    if (isGameRunning) { // Verificar que el juego aún esté corriendo
-                        showAnswerSection();
-                    }
-                }, currentSpeed);
+                    showAnswerSection();
+                }, 1500); // Cambiado a 1.5 segundos
             }
         }
     }
@@ -206,26 +139,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const finalResult = initialNumberValue + currentSum; // Sumar el número inicial
         const isCorrect = userAnswer === finalResult;
         
-        let message = '';
-        if (isCorrect) {
-            if (currentLevel < 3) {
-                const leveledUp = levelUp();
-                if (leveledUp) {
-                    message = `¡Correcto! Has avanzado al Nivel ${currentLevel}. Resultado: ${finalResult} (${initialNumberValue} + ${currentSum})`;
-                    // Generar nuevo juego para el siguiente nivel
-                    setTimeout(() => {
-                        generateNewGame();
-                        answerInput.value = '';
-                    }, 3000);
-                }
-            } else {
-                message = `¡Felicitaciones! Has completado todos los niveles. Resultado: ${finalResult} (${initialNumberValue} + ${currentSum})`;
-            }
-        } else {
-            message = `Incorrecto. El resultado correcto es ${finalResult} (${initialNumberValue} + ${currentSum})`;
-        }
+        resultMessage.textContent = isCorrect ? 
+            `¡Correcto! El resultado es ${finalResult} (${initialNumberValue} + ${currentSum})` : 
+            `Incorrecto. El resultado correcto es ${finalResult} (${initialNumberValue} + ${currentSum})`;
         
-        resultMessage.textContent = message;
         resultMessage.className = `result-message ${isCorrect ? 'correct' : 'incorrect'}`;
         resultMessage.style.display = 'block';
         
@@ -234,14 +151,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Habilitar el botón para reiniciar
         startButton.disabled = false;
-        
-        if (isCorrect && currentLevel <= 3) {
-            startButton.textContent = currentLevel === 3 ? 'NUEVO JUEGO' : 'CONTINUAR';
-            startButton.style.backgroundColor = currentLevel === 3 ? '#4CAF50' : '#FF9800';
-        } else {
-            startButton.textContent = 'REINICIAR';
-            startButton.style.backgroundColor = '#FF9800';
-        }
+        startButton.textContent = 'REINICIAR';
+        startButton.style.backgroundColor = '#FF9800';
     }
 
     // Función para generar nuevo juego (números iniciales y secuencia)
@@ -256,32 +167,17 @@ document.addEventListener('DOMContentLoaded', function() {
         // Generar nuevos números para el juego
         generateGameNumbers();
         
-        // Asegurar que el primer número no sea igual al número inicial
-        ensureFirstNumberDifferent();
-        
         // Mostrar 0 en el contador
         numberCounter.textContent = '0';
-        
-        // Asegurar que el juego no esté corriendo
-        isGameRunning = false;
-        startButton.textContent = 'START';
-        startButton.style.backgroundColor = '#4CAF50';
     }
 
     // Función para iniciar el juego
     function startGame() {
         if (isGameRunning) return;
         
-        // Limpiar cualquier intervalo existente para evitar duplicados
-        if (gameInterval) {
-            clearInterval(gameInterval);
-            gameInterval = null;
-        }
-        
         // Reiniciar variables
         currentNumberIndex = 0;
         currentSum = 0;
-        gameStartTime = Date.now(); // Registrar el tiempo de inicio
         
         isGameRunning = true;
         startButton.textContent = 'STOP';
@@ -294,13 +190,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Generar el primer número inmediatamente
         updateNumber();
         
-        // Configurar el intervalo según el nivel actual con tiempo exacto
-        const currentSpeed = LEVELS[currentLevel].speed;
-        gameInterval = setInterval(() => {
-            if (isGameRunning) { // Verificar que el juego aún esté corriendo
-                updateNumber();
-            }
-        }, currentSpeed);
+        // Configurar el intervalo para cambiar números cada 1.5 segundos
+        gameInterval = setInterval(updateNumber, 1500);
     }
 
     // Función para detener el juego
@@ -311,14 +202,11 @@ document.addEventListener('DOMContentLoaded', function() {
         startButton.textContent = 'START';
         startButton.style.backgroundColor = '#4CAF50';
         
-        // Limpiar el intervalo de manera segura
-        if (gameInterval) {
-            clearInterval(gameInterval);
-            gameInterval = null;
-        }
+        // Limpiar el intervalo
+        clearInterval(gameInterval);
         
-        // Mostrar el número inicial cuando se detiene (no 0)
-        numberDisplay.textContent = `+${initialNumberValue}`;
+        // Mostrar 0 cuando se detiene
+        numberDisplay.textContent = '0';
         numberDisplay.style.color = '#000';
         numberCounter.textContent = '0';
         
@@ -329,38 +217,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para reiniciar el juego
     function resetGame() {
-        // Detener el juego de manera segura
         stopGame();
-        
-        // Asegurar que no haya intervalos activos
-        if (gameInterval) {
-            clearInterval(gameInterval);
-            gameInterval = null;
-        }
-        
-        // Generar un nuevo juego con nuevo número inicial
         generateNewGame();
     }
 
     // Generar el primer juego al cargar la página
-    updateLevelDisplay();
     generateNewGame();
 
     // Event listener para el botón start/stop/reset
     startButton.addEventListener('click', function() {
-        // Prevenir múltiples clics rápidos que puedan causar problemas de timing
-        if (startButton.disabled) return;
-        
         if (isGameRunning) {
             stopGame();
         } else if (startButton.textContent === 'REINICIAR') {
-            resetGame();
-        } else if (startButton.textContent === 'CONTINUAR') {
-            startGame();
-        } else if (startButton.textContent === 'NUEVO JUEGO') {
-            // Reiniciar todo al nivel 1
-            currentLevel = 1;
-            updateLevelDisplay();
             resetGame();
         } else {
             startGame();
