@@ -8,15 +8,18 @@ Un juego educativo interactivo para mejorar las habilidades de cálculo mental c
 
 ## ✨ Características
 
+- **Sistema de 2 niveles**: 
+  - **Nivel 1 (Fácil)**: Números cambian cada 2.5 segundos
+  - **Nivel 2 (Intermedio)**: Números cambian cada 2 segundos, resultado final de un dígito
 - **Número inicial**: Comienza con un número positivo aleatorio como punto de partida
 - **Secuencia de 15 números**: 9 positivos y 6 negativos distribuidos aleatoriamente
 - **Sistema de colores**: 
   - 🟢 Números positivos en verde
   - 🔴 Números negativos en rojo
   - ⚫ Número inicial en negro
-- **Temporización**: Los números cambian cada 1.5 segundos
 - **Sin repeticiones**: No hay números iguales consecutivos
 - **Verificación automática**: Comprueba la respuesta del usuario
+- **Progresión de niveles**: Avanza al siguiente nivel al completar correctamente
 - **Interfaz responsiva**: Diseño adaptativo para diferentes pantallas
 
 ## 🎮 Cómo Jugar
@@ -26,7 +29,11 @@ Un juego educativo interactivo para mejorar las habilidades de cálculo mental c
 3. **Cálculo**: Observa cada número que aparece y calcula mentalmente la suma acumulativa
 4. **Respuesta**: Al final, ingresa tu respuesta en el campo de texto
 5. **Resultado**: El juego verifica si tu respuesta es correcta
-6. **Reinicio**: Presiona "REINICIAR" para jugar una nueva partida
+6. **Niveles**: 
+   - Si respondes correctamente en el Nivel 1, avanzas al Nivel 2
+   - El Nivel 2 tiene una dificultad mayor y el resultado final es siempre un número de un dígito (-9 a 9)
+   - Al completar ambos niveles, puedes iniciar un nuevo juego
+7. **Reinicio**: Presiona "REINICIAR" o "NUEVO JUEGO" para jugar de nuevo
 
 ## 🏗️ Estructura del Proyecto
 
@@ -98,10 +105,15 @@ color: '#C62828'
 color: '#000'
 ```
 
-### Temporización
-- **Intervalo**: 1.5 segundos entre números
-- **Duración total**: ~22.5 segundos por juego
-- **Contador visual**: Muestra el progreso (1/15, 2/15, etc.)
+### Sistema de Niveles
+- **Nivel 1 (Fácil)**: 
+  - Velocidad: 2.5 segundos entre números
+  - Duración total: ~37.5 segundos por juego
+- **Nivel 2 (Intermedio)**: 
+  - Velocidad: 2 segundos entre números
+  - Duración total: ~30 segundos por juego
+  - **Característica especial**: El resultado final siempre es un número de un dígito (entre -9 y 9)
+- **Contador visual**: Muestra el progreso (1/15, 2/15, etc.) y el nivel actual
 
 ## 🎯 Objetivos Educativos
 
@@ -114,13 +126,13 @@ color: '#000'
 ## 🔄 Flujo del Juego
 
 ```
-1. Carga de página
+1. Carga de página (Nivel 1)
    ↓
 2. Generación de número inicial
    ↓
 3. Usuario presiona START
    ↓
-4. Secuencia de 15 números (1.5s cada uno)
+4. Secuencia de 15 números (velocidad según nivel)
    ↓
 5. Input de respuesta del usuario
    ↓
@@ -128,7 +140,11 @@ color: '#000'
    ↓
 7. Mostrar resultado
    ↓
-8. Opción de reiniciar
+8a. Si es correcto en Nivel 1 → Avanzar a Nivel 2
+   ↓
+8b. Si es correcto en Nivel 2 → Completado (opción de nuevo juego)
+   ↓
+8c. Si es incorrecto → Opción de reiniciar
 ```
 
 ## 🎨 Personalización
@@ -146,11 +162,13 @@ color: #C62828;
 color: #000;
 ```
 
-### Modificar Temporización
-Cambia el intervalo en `src/js/script.js`:
+### Modificar Temporización de Niveles
+Edita la configuración de niveles en `src/js/script.js`:
 ```javascript
-// Cambiar de 1500ms a otro valor
-gameInterval = setInterval(updateNumber, 1500);
+const LEVELS = {
+    1: { speed: 2500, name: "Fácil" },      // 2.5 segundos
+    2: { speed: 2000, name: "Intermedio" }  // 2 segundos
+};
 ```
 
 ### Ajustar Distribución
